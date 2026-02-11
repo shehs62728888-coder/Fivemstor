@@ -3,81 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5M Graphics - Black Edition</title>
+    <title>5M Graphics Elite Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --card: #111; --blue: #007bff; --neon: #00d2ff; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: #fff; padding-bottom: 70px; }
-        .header { background: #000; padding: 15px; text-align: center; border-bottom: 1px solid #222; sticky; top: 0; z-index: 100; }
-        .page { display: none; padding: 15px; }
+        :root {
+            --main-color: #007bff;
+            --neon-glow: #00d2ff;
+            --dark-bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+
+        /* خلفية نيون متحركة خلف الموقع */
+        body::before {
+            content: "";
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,123,255,0.05) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* الهيدر الفخم */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 10px var(--main-color); }
+        .logo span { color: var(--main-color); }
+
+        /* شريط العروض */
+        .promo-bar {
+            background: linear-gradient(90deg, transparent, var(--main-color), transparent);
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .page { display: none; padding: 20px; animation: slideUp 0.5s ease; }
         .page.active { display: block; }
-        .banner { background: linear-gradient(45deg, #001f3f, #000); border: 1px solid var(--blue); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .item { background: var(--card); border-radius: 15px; padding: 10px; border: 1px solid #222; text-align: center; }
-        .img-area { width: 100%; height: 110px; background: #1a1a1a; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #444; }
-        .price { color: var(--neon); font-weight: bold; display: block; margin: 5px 0; }
-        .buy-btn { background: var(--blue); color: #fff; border: none; width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #222; }
-        .nav-item { background: none; border: none; color: #555; font-size: 11px; }
-        .nav-item.active { color: var(--neon); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* شبكة المنتجات (3 خانات) */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(5px);
+        }
+
+        .card:hover {
+            border-color: var(--main-color);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: linear-gradient(45deg, #111, #222);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #555;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-title { font-size: 11px; font-weight: bold; margin-bottom: 8px; color: #ddd; }
+        .card-price { color: var(--neon-glow); font-size: 14px; font-weight: 900; }
+        .card-price::after { content: " ﷼"; font-size: 10px; }
+
+        /* صفحة المنتج المفصلة */
+        .details-hero {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 30px 20px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .btn-main {
+            background: linear-gradient(45deg, var(--main-color), var(--neon-glow));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 900;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            cursor: pointer;
+        }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 10px;
+            font-family: 'Cairo';
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .nav-item.active { color: var(--main-color); transform: translateY(-5px); }
+        .nav-item span { font-size: 20px; display: block; }
+
+        /* إشعارات */
+        #notification {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--main-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 2000;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="header"><b style="letter-spacing:1px;">5M <span style="color:var(--blue)">GRAPHICS</span></b></div>
+<div id="notification">تمت الإضافة للسلة بنجاح!</div>
 
-    <div id="home" class="page active">
-        <div class="banner">
-            <h2 style="margin:0; color:var(--neon)">PREMIUM SHOP</h2>
-            <p style="font-size:12px; color:#aaa">أفضل جرافيكس فايف إم في مكان واحد</p>
+<div class="promo-bar">خصم 20% بمناسبة الافتتاح - كود: .qhpp</div>
+
+<header>
+    <div class="logo">5M<span>ELITE</span></div>
+    <div style="font-size: 20px;">👤</div>
+</header>
+
+<div id="home" class="page active">
+    <h3 style="border-right: 4px solid var(--main-color); padding-right: 10px;">الجرافيكس المتاحة</h3>
+    <div class="products-grid">
+        <div class="card" onclick="openDetails('Ultra FPS Booster', '99', 'تحسين أداء اللعبة بشكل كامل وزيادة الفريمات حتى في الأجهزة الضعيفة.')">
+            <div class="card-img">IMAGE 1</div>
+            <div class="card-title">تحسين FPS Pro</div>
+            <div class="card-price">99</div>
         </div>
-        <div class="grid">
-            <div class="item">
-                <div class="img-area">PREVIEW</div>
-                <span style="font-size:13px">Ultra Realistic V4</span>
-                <span class="price">99 SAR</span>
-                <button class="buy-btn">شراء</button>
-            </div>
-            <div class="item">
-                <div class="img-area">PREVIEW</div>
-                <span style="font-size:13px">Night Life Mod</span>
-                <span class="price">45 SAR</span>
-                <button class="buy-btn">شراء</button>
-            </div>
+        <div class="card" onclick="openDetails('Realistic Sky V3', '45', 'تغيير شامل لألوان السماء والغيوم لتصبح واقعية بشكل مذهل.')">
+            <div class="card-img">IMAGE 2</div>
+            <div class="card-title">جرافيكس السماء</div>
+            <div class="card-price">45</div>
+        </div>
+        <div class="card" onclick="openDetails('Weapon Neon Skins', '30', 'مجموعة ألوان نيون مضيئة للأسلحة تعطي شكلاً مميزاً.')">
+            <div class="card-img">IMAGE 3</div>
+            <div class="card-title">ألوان الأسلحة</div>
+            <div class="card-price">30</div>
+        </div>
+        <div class="card" onclick="openDetails('Natural Vision Kit', '120', 'أفضل حزمة جرافيكس شاملة للمدينة والسيارات والإضاءة.')">
+            <div class="card-img">IMAGE 4</div>
+            <div class="card-title">واقعية المدينة</div>
+            <div class="card-price">120</div>
+        </div>
+        <div class="card" onclick="openDetails('Cinematic Kill Effect', '25', 'تأثير سينمائي مميز عند قتل الخصم في سيرفرات القتال.')">
+            <div class="card-img">IMAGE 5</div>
+            <div class="card-title">تأثير القتل</div>
+            <div class="card-price">25</div>
+        </div>
+        <div class="card" onclick="openDetails('No Water/Grass Lag', '15', 'إزالة تفاصيل الماء والعشب غير الضرورية لزيادة الأداء.')">
+            <div class="card-img">IMAGE 6</div>
+            <div class="card-title">إزالة اللاق</div>
+            <div class="card-price">15</div>
         </div>
     </div>
+</div>
 
-    <div id="cart" class="page">
-        <h3 style="border-right:3px solid var(--blue); padding-right:10px">سلة المشتريات</h3>
-        <div style="background:var(--card); padding:20px; border-radius:15px; text-align:center; border:1px dashed #333;">
-            <p>السلة فارغة حالياً</p>
-            <button onclick="showPage('home')" style="background:none; border:1px solid var(--blue); color:var(--blue); padding:10px 20px; border-radius:8px">العودة للمتجر</button>
-        </div>
+<div id="details" class="page">
+    <button onclick="showPage('home')" style="background:none; border:none; color:var(--main-color); font-weight:bold; margin-bottom:20px;">← العودة للمتجر</button>
+    <div class="details-hero">
+        <div class="card-img" style="height: 250px; font-size: 20px;">PREVIEW IMAGE</div>
+        <h2 id="det-name" style="margin: 10px 0;"></h2>
+        <p id="det-info" style="color:#aaa; font-size:14px; line-height:1.8;"></p>
+        <div class="card-price" id="det-cost" style="font-size:32px; margin:20px 0;"></div>
+        <button class="btn-main" onclick="orderNow()">شراء الآن عبر TikTok</button>
     </div>
+</div>
 
-    <div id="profile" class="page">
-        <h3>حسابي</h3>
-        <div style="background:var(--card); padding:15px; border-radius:15px;">
-            <div style="padding:10px; border-bottom:1px solid #222">📦 طلباتي</div>
-            <div style="padding:10px; border-bottom:1px solid #222">💳 الدفع</div>
-            <div style="padding:10px; color:red">تسجيل الخروج</div>
-        </div>
+<div id="profile" class="page">
+    <div style="text-align:center; padding: 40px 0;">
+        <div style="width:100px; height:100px; background:var(--card-bg); border-radius:50%; margin: 0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:40px; border:2px solid var(--main-color);">👤</div>
+        <h3>تسجيل الدخول</h3>
+        <p style="color:#777; font-size:13px;">يرجى تسجيل الدخول بحساب قوقل لحفظ بياناتك</p>
+        
+        <button onclick="fakeGoogleLogin()" style="background:white; color:black; border:none; padding:15px 25px; border-radius:50px; font-weight:bold; display:flex; align-items:center; margin:30px auto; cursor:pointer;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" style="margin-left:12px;">
+            مواصلة باستخدام Google
+        </button>
     </div>
+</div>
 
-    <div class="nav">
-        <button class="nav-item active" onclick="showPage('home', this)">🏠<br>الرئيسية</button>
-        <button class="nav-item" onclick="showPage('cart', this)">🛒<br>السلة</button>
-        <button class="nav-item" onclick="showPage('profile', this)">👤<br>حسابي</button>
-    </div>
+<div class="bottom-nav">
+    <button class="nav-item active" onclick="showPage('home', this)"><span>🏠</span>الرئيسية</button>
+    <button class="nav-item" onclick="showPage('details', this)"><span>🔥</span>العروض</button>
+    <button class="nav-item" onclick="showPage('profile', this)"><span>👤</span>حسابي</button>
+</div>
 
-    <script>
-        function showPage(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(btn) {
-                document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
+<script>
+    function showPage(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        
+        if(btn) {
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
-    </script>
+    }
+
+    function openDetails(name, price, desc) {
+        document.getElementById('det-name').innerText = name;
+        document.getElementById('det-cost').innerText = price;
+        document.getElementById('det-info').innerText = desc;
+        showPage('details');
+    }
+
+    function orderNow() {
+        showNotify("جاري تحويلك لحساب صاحب الموقع...");
+        setTimeout(() => {
+            window.location.href = "https://www.tiktok.com/@.qhpp";
+        }, 1500);
+    }
+
+    function showNotify(msg) {
+        let n = document.getElementById('notification');
+        n.innerText = msg;
+        n.style.display = 'block';
+        setTimeout(() => { n.style.display = 'none'; }, 3000);
+    }
+
+    function fakeGoogleLogin() {
+        showNotify("جاري الربط مع Google Firebase...");
+    }
+</script>
+
 </body>
 </html>
